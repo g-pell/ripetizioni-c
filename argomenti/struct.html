@@ -1,0 +1,1686 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ripetizioni C: struct, puntatori e funzioni</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f7f8fc;
+      --bg-soft: #ffffff;
+      --card: rgba(255, 255, 255, 0.88);
+      --card-strong: #ffffff;
+      --text: #10172a;
+      --muted: #52607a;
+      --accent: #3457d5;
+      --accent-2: #0097a7;
+      --success: #14895a;
+      --danger: #c83545;
+      --warning: #9b6b00;
+      --border: rgba(20, 24, 40, 0.12);
+      --shadow: 0 22px 60px rgba(70, 84, 115, 0.15);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: "Inter", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        linear-gradient(135deg, rgba(52, 87, 213, 0.12), transparent 34rem),
+        linear-gradient(225deg, rgba(0, 151, 167, 0.12), transparent 32rem),
+        linear-gradient(180deg, #f7f8fc 0%, #eef3ff 45%, #ffffff 100%);
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .font-mono {
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    .navbar {
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .navbar-brand {
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .nav-link {
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 0.94rem;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--text);
+    }
+
+    .btn-main {
+      border: 0;
+      color: #fff;
+      font-weight: 800;
+      border-radius: 999px;
+      padding: 0.85rem 1.2rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 14px 30px rgba(52, 87, 213, 0.22);
+    }
+
+    .btn-soft {
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.82rem 1.1rem;
+      background: var(--card);
+      font-weight: 800;
+    }
+
+    .btn-soft:hover,
+    .btn-main:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-main:hover {
+      color: #fff;
+    }
+
+    .hero {
+      padding: 8.5rem 0 4.5rem;
+      position: relative;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 8vw, 6.4rem);
+      line-height: 0.92;
+      letter-spacing: -0.075em;
+      font-weight: 800;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 1.12rem;
+      max-width: 760px;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      gap: 0.55rem;
+      align-items: center;
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 999px;
+      padding: 0.48rem 0.82rem;
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+
+    .glass-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .section {
+      padding: 5rem 0;
+    }
+
+    .section-title {
+      letter-spacing: -0.055em;
+      font-weight: 800;
+      font-size: clamp(2rem, 5vw, 3.8rem);
+    }
+
+    .section-subtitle {
+      color: var(--muted);
+      font-size: 1.06rem;
+      max-width: 760px;
+    }
+
+    .mini-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      height: 100%;
+    }
+
+    .mini-card h3,
+    .mini-card h4 {
+      font-weight: 800;
+      letter-spacing: -0.035em;
+    }
+
+    .mini-card p,
+    .text-muted-custom {
+      color: var(--muted);
+    }
+
+    .icon-chip {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(52, 87, 213, 0.18), rgba(0, 151, 167, 0.18));
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    pre {
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: 0 16px 34px rgba(70, 84, 115, 0.12);
+      overflow: auto;
+    }
+
+    code,
+    pre {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.9rem;
+    }
+
+    .code-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 0.84rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.7rem;
+    }
+
+    .table {
+      --bs-table-color: var(--text);
+      --bs-table-bg: transparent;
+      --bs-table-border-color: var(--border);
+    }
+
+    .table thead th {
+      color: var(--muted);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .lesson-step {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 1rem;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--card);
+      margin-bottom: 0.9rem;
+    }
+
+    .step-number {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: rgba(52, 87, 213, 0.13);
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    .quiz-option {
+      width: 100%;
+      text-align: left;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 0.9rem 1rem;
+      margin-bottom: 0.75rem;
+      font-weight: 700;
+      transition: 0.2s ease;
+    }
+
+    .quiz-option:hover {
+      transform: translateX(3px);
+      background: var(--card-strong);
+    }
+
+    .quiz-option.correct {
+      border-color: rgba(20, 137, 90, 0.75);
+      background: rgba(20, 137, 90, 0.12);
+    }
+
+    .quiz-option.wrong {
+      border-color: rgba(200, 53, 69, 0.75);
+      background: rgba(200, 53, 69, 0.1);
+    }
+
+    .exercise-item {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--card);
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+
+    .exercise-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem;
+      cursor: pointer;
+    }
+
+    .exercise-body {
+      display: none;
+      padding: 0 1rem 1rem;
+      color: var(--muted);
+    }
+
+    .exercise-item.open .exercise-body {
+      display: block;
+    }
+
+    .progress-thin {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(20, 24, 40, 0.08);
+      overflow: hidden;
+    }
+
+    .progress-thin span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: 0.4s ease;
+    }
+
+    .floating-toc {
+      position: sticky;
+      top: 92px;
+    }
+
+    .toc-link {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.7rem 0.85rem;
+      border-radius: 13px;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .toc-link:hover,
+    .toc-link.active {
+      background: var(--card-strong);
+      color: var(--text);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.42rem;
+      border-radius: 999px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 0.4rem 0.7rem;
+      font-size: 0.84rem;
+      font-weight: 800;
+      margin: 0.15rem;
+    }
+
+    .pointer-flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .flow-card {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 16px;
+      padding: 1rem;
+      min-height: 112px;
+    }
+
+    .flow-arrow {
+      color: var(--accent-2);
+      font-size: 1.4rem;
+    }
+
+    .toast-area {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 1100;
+      width: min(360px, calc(100vw - 40px));
+    }
+
+    .custom-toast {
+      border-radius: 16px;
+      background: var(--card-strong);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(20px);
+      padding: 1rem;
+      margin-top: 0.75rem;
+      animation: toastIn 0.25s ease;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .footer {
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      padding: 2rem 0;
+    }
+
+    .small-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .copy-btn {
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 0.45rem 0.65rem;
+      font-weight: 800;
+      font-size: 0.82rem;
+    }
+
+    .copy-btn:hover {
+      background: var(--card-strong);
+    }
+
+    .note {
+      border-left: 4px solid var(--accent);
+      padding: 1rem 1.1rem;
+      border-radius: 0 14px 14px 0;
+      background: rgba(52, 87, 213, 0.08);
+      color: var(--muted);
+    }
+
+    .bad {
+      color: var(--danger);
+    }
+
+    .good {
+      color: var(--success);
+    }
+
+    @media (max-width: 991px) {
+      .hero {
+        padding-top: 7rem;
+      }
+
+      .floating-toc {
+        position: static;
+      }
+
+      .pointer-flow {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-arrow {
+        transform: rotate(90deg);
+        justify-self: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="../index.html">
+        <span class="icon-chip m-0" style="width:36px;height:36px;border-radius:12px;"><i class="fa-solid fa-code"></i></span>
+        Ripasso C
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-label="Apri menu">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+          <li class="nav-item"><a class="nav-link" href="#struct">Struct</a></li>
+          <li class="nav-item"><a class="nav-link" href="#array">Array</a></li>
+          <li class="nav-item"><a class="nav-link" href="#funzioni">Funzioni</a></li>
+          <li class="nav-item"><a class="nav-link" href="#puntatori">Puntatori</a></li>
+          <li class="nav-item"><a class="nav-link" href="#esempio">Esempio</a></li>
+          <li class="nav-item"><a class="nav-link" href="#quiz">Quiz</a></li>
+          <li class="nav-item"><a class="nav-link" href="../index.html#argomenti">Argomenti</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main id="home">
+    <section class="hero">
+      <div class="container">
+        <div class="row align-items-center g-4">
+          <div class="col-lg-7">
+            <div class="badge-pill mb-4">
+              <i class="fa-solid fa-graduation-cap"></i>
+              Ripetizioni di C, chiare e pratiche
+            </div>
+            <h1>Struct, funzioni, puntatori.</h1>
+            <p class="mt-4">
+              Una pagina generale per capire come creare tipi con le struct, usare array di struct, scrivere funzioni ordinate e decidere quando servono <span class="font-mono">*</span>, <span class="font-mono">&amp;</span>, <span class="font-mono">.</span> e <span class="font-mono">-&gt;</span>.
+            </p>
+            <div class="d-flex flex-wrap gap-2 mt-4">
+              <a class="btn btn-main" href="#struct"><i class="fa-solid fa-play me-2"></i>Inizia il ripasso</a>
+              <a class="btn btn-soft" href="#esempio"><i class="fa-solid fa-file-code me-2"></i>Vai al file di esempio</a>
+            </div>
+            <div class="mt-4">
+              <span class="pill"><i class="fa-solid fa-cube"></i> struct</span>
+              <span class="pill"><i class="fa-solid fa-table-cells"></i> array</span>
+              <span class="pill"><i class="fa-solid fa-location-dot"></i> puntatori</span>
+              <span class="pill"><i class="fa-solid fa-gears"></i> funzioni</span>
+              <span class="pill"><i class="fa-solid fa-quote-left"></i> stringhe</span>
+              <span class="pill"><i class="fa-solid fa-bug"></i> errori comuni</span>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="glass-card p-3 p-md-4">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="code-label mb-0"><i class="fa-solid fa-file-code"></i> Idea base</span>
+                <button class="copy-btn" data-copy="#heroCode"><i class="fa-regular fa-copy me-1"></i>Copia</button>
+              </div>
+              <pre class="mb-0"><code class="language-c" id="heroCode">typedef struct {
+    int id;
+    char nome[31];
+    float prezzo;
+} TProdotto;
+
+TProdotto p = {1, "matita", 0.80f};
+
+printf("%s costa %.2f", p.nome, p.prezzo);</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section pt-0">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-lg-3">
+            <aside class="floating-toc glass-card p-3">
+              <div class="small-title mb-2">Percorso</div>
+              <a class="toc-link" href="#struct"><i class="fa-solid fa-cube"></i> Struct</a>
+              <a class="toc-link" href="#array"><i class="fa-solid fa-table-cells"></i> Array</a>
+              <a class="toc-link" href="#funzioni"><i class="fa-solid fa-gears"></i> Funzioni</a>
+              <a class="toc-link" href="#puntatori"><i class="fa-solid fa-location-dot"></i> Puntatori</a>
+              <a class="toc-link" href="#stringhe"><i class="fa-solid fa-quote-left"></i> Stringhe</a>
+              <a class="toc-link" href="#bug"><i class="fa-solid fa-bug"></i> Errori comuni</a>
+              <a class="toc-link" href="#esempio"><i class="fa-solid fa-file-code"></i> File di esempio</a>
+              <a class="toc-link" href="#quiz"><i class="fa-solid fa-circle-question"></i> Quiz</a>
+              <a class="toc-link" href="#esercizi"><i class="fa-solid fa-dumbbell"></i> Esercizi</a>
+            </aside>
+          </div>
+
+          <div class="col-lg-9">
+            <section id="struct" class="mb-5">
+              <div class="mb-4">
+                <div class="badge-pill mb-3"><i class="fa-solid fa-cube"></i> Parte 1</div>
+                <h2 class="section-title">Che cos'è una struct</h2>
+                <p class="section-subtitle">
+                  Una <span class="font-mono">struct</span> permette di raggruppare dati diversi sotto un unico nome. Se un prodotto ha id, nome, prezzo e quantita, invece di gestire quattro variabili separate puoi creare un tipo unico.
+                </p>
+              </div>
+
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="mini-card">
+                    <h3>Definire un tipo</h3>
+                    <p>Con <span class="font-mono">typedef struct</span> crei un nuovo tipo riutilizzabile nel programma.</p>
+                    <pre><code class="language-c">#define MAXSTR 31
+
+typedef struct {
+    int id;
+    char nome[MAXSTR];
+    float prezzo;
+    int quantita;
+} TProdotto;</code></pre>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mini-card">
+                    <h3>Usare una variabile</h3>
+                    <p>Una variabile struct contiene tutti i suoi campi. Con il punto accedi a un campo specifico.</p>
+                    <pre><code class="language-c">TProdotto prodotto;
+
+prodotto.id = 10;
+prodotto.prezzo = 4.50f;
+prodotto.quantita = 20;
+strcpy_s(prodotto.nome, MAXSTR, "quaderno");</code></pre>
+                  </div>
+                </div>
+              </div>
+
+              <div class="glass-card p-3 p-md-4 mt-4">
+                <h3 class="fw-bold">La struct è un modello</h3>
+                <p class="text-muted-custom">
+                  La definizione dice quali campi avra ogni variabile di quel tipo. Le variabili vere sono quelle dichiarate dopo: <span class="font-mono">TProdotto p1;</span>, <span class="font-mono">TProdotto p2;</span>, oppure <span class="font-mono">TProdotto magazzino[100];</span>.
+                </p>
+                <div class="table-responsive">
+                  <table class="table align-middle mb-0">
+                    <thead>
+                      <tr>
+                        <th>Campo</th>
+                        <th>Esempio</th>
+                        <th>Quando serve</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="font-mono">int id</td>
+                        <td>101</td>
+                        <td>Codice numerico, posizione logica, matricola.</td>
+                      </tr>
+                      <tr>
+                        <td class="font-mono">char nome[MAXSTR]</td>
+                        <td>"penna"</td>
+                        <td>Testi brevi salvati dentro la struct.</td>
+                      </tr>
+                      <tr>
+                        <td class="font-mono">float prezzo</td>
+                        <td>1.25f</td>
+                        <td>Numeri con virgola, come prezzi o medie.</td>
+                      </tr>
+                      <tr>
+                        <td class="font-mono">int quantita</td>
+                        <td>12</td>
+                        <td>Conteggi interi.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="row g-4 mt-1">
+                <div class="col-md-4">
+                  <div class="mini-card">
+                    <h3 class="h4">Studente</h3>
+                    <pre><code class="language-c">typedef struct {
+    int matricola;
+    char nome[40];
+    float media;
+} TStudente;</code></pre>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mini-card">
+                    <h3 class="h4">Libro</h3>
+                    <pre><code class="language-c">typedef struct {
+    char titolo[60];
+    char autore[40];
+    int pagine;
+} TLibro;</code></pre>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mini-card">
+                    <h3 class="h4">Punto 2D</h3>
+                    <pre><code class="language-c">typedef struct {
+    float x;
+    float y;
+} TPunto;</code></pre>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section id="array" class="mb-5">
+              <div class="mb-4">
+                <div class="badge-pill mb-3"><i class="fa-solid fa-table-cells"></i> Parte 2</div>
+                <h2 class="section-title">Array di struct</h2>
+                <p class="section-subtitle">
+                  Un array di struct contiene tanti elementi dello stesso tipo. Di solito si usa una costante per la capienza massima e una variabile <span class="font-mono">n</span> per dire quanti elementi sono davvero validi.
+                </p>
+              </div>
+
+              <div class="mini-card">
+                <div class="row g-4">
+                  <div class="col-md-6">
+                    <pre><code class="language-c">#define MAX_PROD 100
+
+TProdotto prodotti[MAX_PROD] = {
+    {1, "penna", 1.20f, 50},
+    {2, "quaderno", 3.40f, 25},
+    {3, "gomma", 0.70f, 80}
+};
+
+int n = 3;</code></pre>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="lesson-step">
+                      <div class="step-number">1</div>
+                      <div>
+                        <h4 class="h6 fw-bold mb-1">Capienza massima</h4>
+                        <p class="mb-0 text-muted-custom"><span class="font-mono">MAX_PROD</span> dice quanto spazio hai riservato.</p>
+                      </div>
+                    </div>
+                    <div class="lesson-step">
+                      <div class="step-number">2</div>
+                      <div>
+                        <h4 class="h6 fw-bold mb-1">Elementi validi</h4>
+                        <p class="mb-0 text-muted-custom"><span class="font-mono">n</span> dice quante posizioni contengono dati utili.</p>
+                      </div>
+                    </div>
+                    <div class="lesson-step mb-0">
+                      <div class="step-number">3</div>
+                      <div>
+                        <h4 class="h6 fw-bold mb-1">Cicli</h4>
+                        <p class="mb-0 text-muted-custom">Per stampare o cercare usi <span class="font-mono">i &lt; n</span>, non <span class="font-mono">i &lt; MAX_PROD</span>.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row g-4 mt-1">
+                <div class="col-md-6">
+                  <div class="mini-card">
+                    <h3>Stampare un array</h3>
+                    <pre><code class="language-c">void stampaProdotti(TProdotto ar[], int n)
+{
+    int i;
+
+    for (i = 0; i &lt; n; i++)
+    {
+        printf("%d %s %.2f %d\n",
+            ar[i].id,
+            ar[i].nome,
+            ar[i].prezzo,
+            ar[i].quantita);
+    }
+}</code></pre>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mini-card">
+                    <h3>Cercare in un array</h3>
+                    <pre><code class="language-c">int cercaPerId(TProdotto ar[], int n, int id)
+{
+    int i;
+
+    for (i = 0; i &lt; n; i++)
+    {
+        if (ar[i].id == id)
+        {
+            return i;
+        }
+    }
+
+    return -1;
+}</code></pre>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section id="funzioni" class="mb-5">
+              <div class="mb-4">
+                <div class="badge-pill mb-3"><i class="fa-solid fa-gears"></i> Parte 3</div>
+                <h2 class="section-title">Funzioni ordinate</h2>
+                <p class="section-subtitle">
+                  Una funzione dovrebbe fare un lavoro preciso: stampare, cercare, modificare, aggiungere, eliminare, ordinare. Il prototipo dice che dati riceve e che risultato restituisce.
+                </p>
+              </div>
+
+              <div class="row g-4">
+                <div class="col-md-4">
+                  <div class="mini-card">
+                    <div class="icon-chip"><i class="fa-solid fa-eye"></i></div>
+                    <h3 class="h4">Solo lettura</h3>
+                    <p>Se la funzione deve solo leggere, passa i valori normalmente.</p>
+                    <pre><code class="language-c">void stampaProdotti(
+    TProdotto ar[],
+    int n
+);</code></pre>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mini-card">
+                    <div class="icon-chip"><i class="fa-solid fa-pen"></i></div>
+                    <h3 class="h4">Modifica dati</h3>
+                    <p>Per modificare elementi dell'array basta passare l'array: arriva gia come indirizzo.</p>
+                    <pre><code class="language-c">int modificaPrezzo(
+    TProdotto ar[],
+    int n,
+    int id,
+    float prezzo
+);</code></pre>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mini-card">
+                    <div class="icon-chip"><i class="fa-solid fa-plus"></i></div>
+                    <h3 class="h4">Modifica n</h3>
+                    <p>Se cambia il numero di elementi, la funzione deve ricevere un puntatore a <span class="font-mono">n</span>.</p>
+                    <pre><code class="language-c">int aggiungiProdotto(
+    TProdotto ar[],
+    int* pN,
+    TProdotto prod
+);</code></pre>
+                  </div>
+                </div>
+              </div>
+
+              <div class="glass-card p-3 p-md-4 mt-4">
+                <h3 class="fw-bold mb-3">Perché spesso si restituisce <span class="font-mono">int</span></h3>
+                <p class="text-muted-custom">
+                  In molti esercizi si usa <span class="font-mono">1</span> per dire "operazione riuscita" e <span class="font-mono">0</span> per dire "operazione non riuscita". Se devi cercare una posizione, invece, spesso restituisci l'indice oppure <span class="font-mono">-1</span>.
+                </p>
+                <pre class="mb-0"><code class="language-c">if (aggiungiProdotto(prodotti, &amp;n, nuovo))
+{
+    printf("Prodotto aggiunto.\n");
+}
+else
+{
+    printf("Array pieno.\n");
+}</code></pre>
+              </div>
+            </section>
+
+            <section id="puntatori" class="mb-5">
+              <div class="mb-4">
+                <div class="badge-pill mb-3"><i class="fa-solid fa-location-dot"></i> Parte 4</div>
+                <h2 class="section-title">Puntatori, &amp; e *</h2>
+                <p class="section-subtitle">
+                  Un puntatore è una variabile che contiene un indirizzo. Serve quando vuoi lavorare sul dato originale invece che su una copia.
+                </p>
+              </div>
+
+              <div class="pointer-flow mb-4">
+                <div class="flow-card">
+                  <div class="small-title">Variabile</div>
+                  <h3 class="fw-bold font-mono mt-2">int n = 3;</h3>
+                  <p class="text-muted-custom mb-0">La variabile contiene il valore.</p>
+                </div>
+                <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="flow-card">
+                  <div class="small-title">Indirizzo</div>
+                  <h3 class="fw-bold font-mono mt-2">&amp;n</h3>
+                  <p class="text-muted-custom mb-0">L'operatore <span class="font-mono">&amp;</span> prende l'indirizzo.</p>
+                </div>
+                <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="flow-card">
+                  <div class="small-title">Valore puntato</div>
+                  <h3 class="fw-bold font-mono mt-2">*pN = 4;</h3>
+                  <p class="text-muted-custom mb-0">L'operatore <span class="font-mono">*</span> usa il valore dentro quell'indirizzo.</p>
+                </div>
+              </div>
+
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="mini-card">
+                    <h3>Il punto <span class="font-mono">.</span></h3>
+                    <p>Si usa quando hai una struct normale.</p>
+                    <pre><code class="language-c">TProdotto p;
+
+p.prezzo = 2.50f;
+p.quantita = 10;
+strcpy_s(p.nome, MAXSTR, "righello");</code></pre>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mini-card">
+                    <h3>La freccia <span class="font-mono">-&gt;</span></h3>
+                    <p>Si usa quando hai un puntatore a struct.</p>
+                    <pre><code class="language-c">void cambiaPrezzo(TProdotto* p)
+{
+    p-&gt;prezzo = 2.50f;
+    p-&gt;quantita = 10;
+}</code></pre>
+                  </div>
+                </div>
+              </div>
+
+              <div class="glass-card p-3 p-md-4 mt-4">
+                <h3 class="fw-bold">Quando uso <span class="font-mono">*</span> e <span class="font-mono">&amp;</span></h3>
+                <div class="table-responsive">
+                  <table class="table align-middle mb-0">
+                    <thead>
+                      <tr>
+                        <th>Situazione</th>
+                        <th>Nel prototipo</th>
+                        <th>Nella chiamata</th>
+                        <th>Motivo</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>La funzione legge un intero</td>
+                        <td class="font-mono">int n</td>
+                        <td class="font-mono">stampa(n)</td>
+                        <td>Basta una copia.</td>
+                      </tr>
+                      <tr>
+                        <td>La funzione modifica un intero</td>
+                        <td class="font-mono">int* pN</td>
+                        <td class="font-mono">aggiungi(&amp;n)</td>
+                        <td>Serve l'indirizzo della variabile originale.</td>
+                      </tr>
+                      <tr>
+                        <td>La funzione modifica una struct singola</td>
+                        <td class="font-mono">TProdotto* p</td>
+                        <td class="font-mono">sconta(&amp;prod)</td>
+                        <td>La struct originale deve cambiare.</td>
+                      </tr>
+                      <tr>
+                        <td>La funzione lavora su un array</td>
+                        <td class="font-mono">TProdotto ar[]</td>
+                        <td class="font-mono">stampa(ar, n)</td>
+                        <td>Il nome dell'array si comporta gia come indirizzo del primo elemento.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </section>
+
+            <section id="stringhe" class="mb-5">
+              <div class="mb-4">
+                <div class="badge-pill mb-3"><i class="fa-solid fa-quote-left"></i> Parte 5</div>
+                <h2 class="section-title">Stringhe dentro le struct</h2>
+                <p class="section-subtitle">
+                  In C una stringa è un array di <span class="font-mono">char</span>. Dopo la dichiarazione non puoi assegnare un array con <span class="font-mono">=</span>: devi copiare i caratteri dentro lo spazio disponibile.
+                </p>
+              </div>
+
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="mini-card">
+                    <h3 class="bad">Errore</h3>
+                    <pre><code class="language-c">prodotto.nome = "matita";
+prodotto-&gt;nome = "matita";</code></pre>
+                    <p class="mb-0 text-muted-custom">Il campo <span class="font-mono">nome</span> è un array: non si assegna cosi.</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mini-card">
+                    <h3 class="good">Corretto</h3>
+                    <pre><code class="language-c">strcpy_s(prodotto.nome, MAXSTR, "matita");
+strcpy_s(prodotto-&gt;nome, MAXSTR, "matita");</code></pre>
+                    <p class="mb-0 text-muted-custom">Con una struct normale usi il punto. Con un puntatore a struct usi la freccia.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="glass-card p-3 p-md-4 mt-4">
+                <h3 class="fw-bold">Confrontare stringhe</h3>
+                <p class="text-muted-custom">
+                  Anche il confronto tra stringhe non si fa con <span class="font-mono">==</span>. Per confrontare il contenuto si usa <span class="font-mono">strcmp</span>: restituisce <span class="font-mono">0</span> quando le stringhe sono uguali.
+                </p>
+                <pre class="mb-0"><code class="language-c">if (strcmp(ar[i].nome, nomeCercato) == 0)
+{
+    printf("Prodotto trovato.\n");
+}</code></pre>
+              </div>
+            </section>
+
+            <section id="bug" class="mb-5">
+              <div class="mb-4">
+                <div class="badge-pill mb-3"><i class="fa-solid fa-bug"></i> Parte 6</div>
+                <h2 class="section-title">Errori comuni</h2>
+                <p class="section-subtitle">
+                  Sono gli inciampi tipici quando si lavora con struct, array, stringhe e puntatori. Conviene imparare a riconoscerli al volo.
+                </p>
+              </div>
+
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="mini-card">
+                    <h3>Confondere <span class="font-mono">MAX</span> e <span class="font-mono">n</span></h3>
+                    <pre><code class="language-c">for (i = 0; i &lt; n; i++)
+{
+    stampa(ar[i]);
+}</code></pre>
+                    <p class="mb-0 text-muted-custom">La capienza massima non è il numero di elementi validi.</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mini-card">
+                    <h3>Dimenticare <span class="font-mono">&amp;</span></h3>
+                    <pre><code class="language-c">aggiungiProdotto(ar, &amp;n, nuovo);</code></pre>
+                    <p class="mb-0 text-muted-custom">Se la funzione riceve <span class="font-mono">int* pN</span>, nella chiamata passi <span class="font-mono">&amp;n</span>.</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mini-card">
+                    <h3>Usare <span class="font-mono">.</span> al posto di <span class="font-mono">-&gt;</span></h3>
+                    <pre><code class="language-c">void sconta(TProdotto* p)
+{
+    p-&gt;prezzo = p-&gt;prezzo * 0.90f;
+}</code></pre>
+                    <p class="mb-0 text-muted-custom">Con un puntatore a struct si usa la freccia.</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mini-card">
+                    <h3>Assegnare stringhe con <span class="font-mono">=</span></h3>
+                    <pre><code class="language-c">strcpy_s(ar[i].nome, MAXSTR, nuovoNome);</code></pre>
+                    <p class="mb-0 text-muted-custom">I campi <span class="font-mono">char[]</span> si riempiono con funzioni di copia.</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mini-card">
+                    <h3>Non controllare i limiti</h3>
+                    <pre><code class="language-c">if (*pN &gt;= MAX_PROD)
+{
+    return 0;
+}</code></pre>
+                    <p class="mb-0 text-muted-custom">Prima di aggiungere controlla che l'array non sia pieno.</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mini-card">
+                    <h3>Sbagliare la cancellazione</h3>
+                    <pre><code class="language-c">for (i = pos; i &lt; n - 1; i++)
+{
+    ar[i] = ar[i + 1];
+}
+n--;</code></pre>
+                    <p class="mb-0 text-muted-custom">Eliminare da array statico significa spostare a sinistra gli elementi successivi.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section id="esempio" class="mb-5">
+              <div class="mb-4">
+                <div class="badge-pill mb-3"><i class="fa-solid fa-file-code"></i> Codice</div>
+                <h2 class="section-title">File di esempio</h2>
+                <p class="section-subtitle">
+                  Un esempio completo e generale su prodotti: mostra struct, array, ricerca, modifica, aggiunta, cancellazione e ordinamento.
+                </p>
+              </div>
+
+              <div class="glass-card p-3 p-md-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="code-label mb-0"><i class="fa-solid fa-terminal"></i> C</span>
+                  <button class="copy-btn" data-copy="#fullCode"><i class="fa-regular fa-copy me-1"></i>Copia</button>
+                </div>
+                <pre><code class="language-c" id="fullCode">#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+#define MAXSTR 31
+#define MAX_PROD 100
+
+typedef struct {
+    int id;
+    char nome[MAXSTR];
+    float prezzo;
+    int quantita;
+} TProdotto;
+
+void stampaProdotti(TProdotto ar[], int n);
+int cercaPerId(TProdotto ar[], int n, int id);
+int modificaPrezzo(TProdotto ar[], int n, int id, float nuovoPrezzo);
+void applicaSconto(TProdotto* p, float percentuale);
+int aggiungiProdotto(TProdotto ar[], int* pN, TProdotto nuovo);
+int eliminaInPosizione(TProdotto ar[], int* pN, int posizione);
+void ordinaPerPrezzoCrescente(TProdotto ar[], int n);
+
+int main(void)
+{
+    TProdotto magazzino[MAX_PROD] = {
+        {1, "penna", 1.20f, 50},
+        {2, "quaderno", 3.40f, 25},
+        {3, "gomma", 0.70f, 80}
+    };
+
+    int n = 3;
+    int pos;
+    TProdotto nuovo = {4, "matita", 0.90f, 100};
+
+    stampaProdotti(magazzino, n);
+
+    modificaPrezzo(magazzino, n, 2, 3.10f);
+
+    pos = cercaPerId(magazzino, n, 1);
+    if (pos != -1)
+    {
+        applicaSconto(&amp;magazzino[pos], 10.0f);
+    }
+
+    if (aggiungiProdotto(magazzino, &amp;n, nuovo))
+    {
+        printf("Prodotto aggiunto.\n");
+    }
+
+    eliminaInPosizione(magazzino, &amp;n, 2);
+    ordinaPerPrezzoCrescente(magazzino, n);
+    stampaProdotti(magazzino, n);
+
+    return 0;
+}
+
+void stampaProdotti(TProdotto ar[], int n)
+{
+    int i;
+
+    for (i = 0; i &lt; n; i++)
+    {
+        printf("%3d %-20s %7.2f %4d\n",
+            ar[i].id,
+            ar[i].nome,
+            ar[i].prezzo,
+            ar[i].quantita);
+    }
+}
+
+int cercaPerId(TProdotto ar[], int n, int id)
+{
+    int i;
+
+    for (i = 0; i &lt; n; i++)
+    {
+        if (ar[i].id == id)
+        {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+int modificaPrezzo(TProdotto ar[], int n, int id, float nuovoPrezzo)
+{
+    int pos = cercaPerId(ar, n, id);
+
+    if (pos == -1)
+    {
+        return 0;
+    }
+
+    ar[pos].prezzo = nuovoPrezzo;
+    return 1;
+}
+
+void applicaSconto(TProdotto* p, float percentuale)
+{
+    p-&gt;prezzo = p-&gt;prezzo * (1.0f - percentuale / 100.0f);
+}
+
+int aggiungiProdotto(TProdotto ar[], int* pN, TProdotto nuovo)
+{
+    if (*pN &gt;= MAX_PROD)
+    {
+        return 0;
+    }
+
+    ar[*pN] = nuovo;
+    (*pN)++;
+    return 1;
+}
+
+int eliminaInPosizione(TProdotto ar[], int* pN, int posizione)
+{
+    int i;
+    int n = *pN;
+
+    if (posizione &lt; 0 || posizione &gt;= n)
+    {
+        return 0;
+    }
+
+    for (i = posizione; i &lt; n - 1; i++)
+    {
+        ar[i] = ar[i + 1];
+    }
+
+    (*pN)--;
+    return 1;
+}
+
+void ordinaPerPrezzoCrescente(TProdotto ar[], int n)
+{
+    int i;
+    int j;
+    TProdotto temp;
+
+    for (i = 0; i &lt; n - 1; i++)
+    {
+        for (j = 0; j &lt; n - 1 - i; j++)
+        {
+            if (ar[j].prezzo &gt; ar[j + 1].prezzo)
+            {
+                temp = ar[j];
+                ar[j] = ar[j + 1];
+                ar[j + 1] = temp;
+            }
+        }
+    }
+}</code></pre>
+              </div>
+            </section>
+
+            <section id="quiz" class="mb-5">
+              <div class="mb-4">
+                <div class="badge-pill mb-3"><i class="fa-solid fa-circle-question"></i> Parte 7</div>
+                <h2 class="section-title">Quiz rapido</h2>
+                <p class="section-subtitle">
+                  Domande veloci per controllare se i concetti principali sono chiari.
+                </p>
+              </div>
+
+              <div class="glass-card p-3 p-md-4">
+                <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+                  <h3 class="fw-bold mb-0" id="quizQuestion">Domanda</h3>
+                  <span class="badge-pill" id="quizCount">1/7</span>
+                </div>
+                <div class="progress-thin mb-4"><span id="quizProgress"></span></div>
+                <div id="quizOptions"></div>
+                <div id="quizFeedback" class="mt-3"></div>
+                <button class="btn btn-main mt-3 d-none" id="nextQuiz" type="button">Prossima domanda</button>
+              </div>
+            </section>
+
+            <section id="esercizi" class="mb-5">
+              <div class="mb-4">
+                <div class="badge-pill mb-3"><i class="fa-solid fa-dumbbell"></i> Parte 8</div>
+                <h2 class="section-title">Esercizietti</h2>
+                <p class="section-subtitle">
+                  Piccoli esercizi da fare a mano o in Visual Studio. Apri il suggerimento solo dopo averci provato.
+                </p>
+              </div>
+
+              <div id="exerciseList"></div>
+            </section>
+
+            <section id="checklist" class="mb-5">
+              <div class="mb-4">
+                <div class="badge-pill mb-3"><i class="fa-solid fa-check"></i> Fine</div>
+                <h2 class="section-title">Checklist ripetizione</h2>
+                <p class="section-subtitle">
+                  Se sai spiegare questi punti senza leggere, sei in ottima forma.
+                </p>
+              </div>
+
+              <div class="glass-card p-3 p-md-4">
+                <div class="row g-3" id="checklistItems"></div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast-area" id="toastArea"></div>
+
+  <footer class="footer">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
+      <div>Ripetizioni su struct, puntatori e funzioni in C</div>
+      <a href="#home" class="btn btn-soft"><i class="fa-solid fa-arrow-up me-2"></i>Torna su</a>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    let quizIndex = 0;
+    let quizLocked = false;
+
+    const quizzes = [
+      {
+        q: "A cosa serve una struct?",
+        options: [
+          "A raggruppare piu dati in un unico tipo",
+          "A ripetere un blocco di istruzioni",
+          "A cancellare automaticamente un array"
+        ],
+        correct: 0,
+        explain: "Una struct descrive un tipo composto da piu campi, anche di tipi diversi."
+      },
+      {
+        q: "Quando uso il punto . ?",
+        options: [
+          "Quando ho una struct normale",
+          "Quando ho un puntatore a struct",
+          "Quando dichiaro una costante"
+        ],
+        correct: 0,
+        explain: "Con una variabile struct normale usi il punto, per esempio prodotto.prezzo."
+      },
+      {
+        q: "Quando uso la freccia -> ?",
+        options: [
+          "Quando ho una struct normale",
+          "Quando ho un puntatore a struct",
+          "Quando confronto due stringhe"
+        ],
+        correct: 1,
+        explain: "La freccia si usa con i puntatori a struct, per esempio p->prezzo."
+      },
+      {
+        q: "Perché passo &n a una funzione?",
+        options: [
+          "Per permettere alla funzione di modificare n originale",
+          "Per stampare meglio n",
+          "Per trasformare n in una stringa"
+        ],
+        correct: 0,
+        explain: "Con &n passi l'indirizzo di n. La funzione puo modificarlo usando *pN."
+      },
+      {
+        q: "Come copio una stringa dentro un campo char nome[MAXSTR]?",
+        options: [
+          "prodotto.nome = \"ciao\";",
+          "strcpy_s(prodotto.nome, MAXSTR, \"ciao\");",
+          "prodotto.nome == \"ciao\";"
+        ],
+        correct: 1,
+        explain: "Un array di char non si assegna con = dopo la dichiarazione: copi il contenuto con strcpy_s."
+      },
+      {
+        q: "Cosa rappresenta n in un array parzialmente pieno?",
+        options: [
+          "La capienza massima",
+          "Il numero di elementi validi",
+          "La dimensione di ogni struct"
+        ],
+        correct: 1,
+        explain: "La capienza massima è la costante. n è il numero di elementi usati davvero."
+      },
+      {
+        q: "Come si elimina un elemento da un array statico?",
+        options: [
+          "Spostando a sinistra gli elementi successivi e diminuendo n",
+          "Mettendo il suo nome a stringa vuota e lasciando n uguale",
+          "Usando free su quella posizione"
+        ],
+        correct: 0,
+        explain: "Negli array statici compattti l'array spostando gli elementi e poi diminuisci n."
+      }
+    ];
+
+    const exercises = [
+      {
+        title: "Stampa studenti",
+        text: "Definisci una struct TStudente con matricola, nome e media. Scrivi una funzione stampaStudenti.",
+        hint: "La funzione riceve TStudente ar[] e int n, poi usa un ciclo da 0 a n - 1.",
+        solution: `typedef struct {
+    int matricola;
+    char nome[40];
+    float media;
+} TStudente;
+
+void stampaStudenti(TStudente ar[], int n)
+{
+    int i;
+
+    for (i = 0; i < n; i++)
+    {
+        printf("%d %s %.2f\\n",
+            ar[i].matricola,
+            ar[i].nome,
+            ar[i].media);
+    }
+}`
+      },
+      {
+        title: "Cerca prodotto per nome",
+        text: "Scrivi una funzione che restituisce la posizione del prodotto con un certo nome oppure -1.",
+        hint: "Per confrontare il nome usa strcmp(ar[i].nome, nomeCercato) == 0.",
+        solution: `int cercaPerNome(TProdotto ar[], int n, char nomeCercato[])
+{
+    int i;
+
+    for (i = 0; i < n; i++)
+    {
+        if (strcmp(ar[i].nome, nomeCercato) == 0)
+        {
+            return i;
+        }
+    }
+
+    return -1;
+}`
+      },
+      {
+        title: "Modifica quantita",
+        text: "Scrivi una funzione che cerca un prodotto per id e cambia la quantita.",
+        hint: "Non serve int* pN perché il numero di prodotti non cambia.",
+        solution: `int modificaQuantita(TProdotto ar[], int n, int id, int nuovaQuantita)
+{
+    int i;
+
+    for (i = 0; i < n; i++)
+    {
+        if (ar[i].id == id)
+        {
+            ar[i].quantita = nuovaQuantita;
+            return 1;
+        }
+    }
+
+    return 0;
+}`
+      },
+      {
+        title: "Aggiungi studente",
+        text: "Scrivi una funzione che aggiunge uno studente in fondo a un array se c'è spazio.",
+        hint: "Serve int* pN perché, se l'inserimento riesce, n aumenta.",
+        solution: `int aggiungiStudente(TStudente ar[], int* pN, TStudente nuovo)
+{
+    if (*pN >= MAX_STUDENTI)
+    {
+        return 0;
+    }
+
+    ar[*pN] = nuovo;
+    (*pN)++;
+    return 1;
+}`
+      },
+      {
+        title: "Cancella per posizione",
+        text: "Scrivi una funzione che elimina la posizione scelta e compatta l'array.",
+        hint: "Controlla prima posizione < 0 oppure posizione >= *pN.",
+        solution: `int cancellaPosizione(TProdotto ar[], int* pN, int posizione)
+{
+    int i;
+
+    if (posizione < 0 || posizione >= *pN)
+    {
+        return 0;
+    }
+
+    for (i = posizione; i < *pN - 1; i++)
+    {
+        ar[i] = ar[i + 1];
+    }
+
+    (*pN)--;
+    return 1;
+}`
+      },
+      {
+        title: "Sconto su prodotto singolo",
+        text: "Scrivi una funzione che riceve TProdotto* p e applica uno sconto.",
+        hint: "Dentro la funzione usa p->prezzo.",
+        solution: `void applicaSconto(TProdotto* p, float percentuale)
+{
+    p->prezzo = p->prezzo * (1.0f - percentuale / 100.0f);
+}`
+      },
+      {
+        title: "Ordina per nome",
+        text: "Ordina un array di prodotti in ordine alfabetico per nome.",
+        hint: "Nel confronto usa strcmp(ar[j].nome, ar[j + 1].nome) > 0.",
+        solution: `void ordinaPerNome(TProdotto ar[], int n)
+{
+    int i;
+    int j;
+    TProdotto temp;
+
+    for (i = 0; i < n - 1; i++)
+    {
+        for (j = 0; j < n - 1 - i; j++)
+        {
+            if (strcmp(ar[j].nome, ar[j + 1].nome) > 0)
+            {
+                temp = ar[j];
+                ar[j] = ar[j + 1];
+                ar[j + 1] = temp;
+            }
+        }
+    }
+}`
+      }
+    ];
+
+    const checklist = [
+      "So dichiarare una struct con typedef",
+      "So creare una variabile struct",
+      "So creare un array di struct",
+      "So distinguere capienza massima e n",
+      "So usare . con una struct normale",
+      "So usare -> con un puntatore a struct",
+      "So spiegare cosa fa &",
+      "So spiegare cosa fa *",
+      "So copiare e confrontare stringhe",
+      "So quando passare int* pN",
+      "So aggiungere in fondo a un array",
+      "So eliminare spostando a sinistra"
+    ];
+
+    function showToast(message) {
+      const area = document.querySelector("#toastArea");
+      const toast = document.createElement("div");
+      toast.className = "custom-toast";
+      toast.innerHTML = message;
+      area.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(12px)";
+        setTimeout(() => toast.remove(), 260);
+      }, 2600);
+    }
+
+    function renderQuiz() {
+      quizLocked = false;
+      const current = quizzes[quizIndex];
+      document.querySelector("#quizQuestion").textContent = current.q;
+      document.querySelector("#quizCount").textContent = `${quizIndex + 1}/${quizzes.length}`;
+      document.querySelector("#quizProgress").style.width = `${(quizIndex / quizzes.length) * 100}%`;
+      document.querySelector("#quizFeedback").innerHTML = "";
+      document.querySelector("#nextQuiz").classList.add("d-none");
+
+      const options = document.querySelector("#quizOptions");
+      options.innerHTML = "";
+
+      current.options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "quiz-option";
+        button.textContent = option;
+        button.addEventListener("click", () => checkQuiz(index, button));
+        options.appendChild(button);
+      });
+    }
+
+    function checkQuiz(index, button) {
+      if (quizLocked) {
+        return;
+      }
+
+      quizLocked = true;
+      const current = quizzes[quizIndex];
+      const allOptions = [...document.querySelectorAll(".quiz-option")];
+
+      allOptions.forEach((item, i) => {
+        if (i === current.correct) {
+          item.classList.add("correct");
+        }
+      });
+
+      if (index !== current.correct) {
+        button.classList.add("wrong");
+      }
+
+      document.querySelector("#quizFeedback").innerHTML = `
+        <div class="alert ${index === current.correct ? "alert-success" : "alert-warning"} border-0 rounded-4 mb-0">
+          ${index === current.correct ? "Giusto." : "Quasi."} ${current.explain}
+        </div>
+      `;
+
+      if (quizIndex < quizzes.length - 1) {
+        document.querySelector("#nextQuiz").classList.remove("d-none");
+      } else {
+        document.querySelector("#quizProgress").style.width = "100%";
+      }
+    }
+
+    document.querySelector("#nextQuiz").addEventListener("click", () => {
+      quizIndex++;
+      renderQuiz();
+    });
+
+    function renderExercises() {
+      const list = document.querySelector("#exerciseList");
+      list.innerHTML = "";
+
+      exercises.forEach((exercise, index) => {
+        const item = document.createElement("div");
+        item.className = "exercise-item";
+        item.innerHTML = `
+          <div class="exercise-head">
+            <div>
+              <div class="small-title">Esercizio ${index + 1}</div>
+              <h3 class="h5 fw-bold mb-0">${exercise.title}</h3>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="exercise-body">
+            <p>${exercise.text}</p>
+            <div class="alert alert-info border-0 rounded-4 mb-3">${exercise.hint}</div>
+            <button class="btn btn-soft solution-toggle" type="button">
+              <i class="fa-solid fa-eye me-2"></i><span>Mostra soluzione</span>
+            </button>
+            <div class="solution-box d-none mt-3">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="code-label mb-0"><i class="fa-solid fa-terminal"></i> Soluzione</span>
+                <button class="copy-btn" data-copy-solution type="button"><i class="fa-regular fa-copy me-1"></i>Copia</button>
+              </div>
+              <pre class="mb-0"><code class="language-c"></code></pre>
+            </div>
+          </div>
+        `;
+
+        item.querySelector(".exercise-head").addEventListener("click", () => {
+          item.classList.toggle("open");
+        });
+
+        const solutionCode = item.querySelector(".solution-box code");
+        solutionCode.textContent = exercise.solution;
+
+        item.querySelector(".solution-toggle").addEventListener("click", () => {
+          const solutionBox = item.querySelector(".solution-box");
+          const isHidden = solutionBox.classList.toggle("d-none");
+          const icon = item.querySelector(".solution-toggle i");
+          icon.className = isHidden ? "fa-solid fa-eye me-2" : "fa-solid fa-eye-slash me-2";
+          item.querySelector(".solution-toggle span").textContent = isHidden ? "Mostra soluzione" : "Nascondi soluzione";
+
+          if (!isHidden && window.Prism) {
+            Prism.highlightElement(solutionCode);
+          }
+        });
+
+        item.querySelector("[data-copy-solution]").addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(exercise.solution);
+            showToast("Soluzione copiata.");
+          } catch {
+            showToast("Non riesco a copiare automaticamente.");
+          }
+        });
+
+        list.appendChild(item);
+      });
+    }
+
+    function renderChecklist() {
+      const target = document.querySelector("#checklistItems");
+      target.innerHTML = "";
+
+      checklist.forEach((text, index) => {
+        const col = document.createElement("div");
+        col.className = "col-md-6";
+        col.innerHTML = `
+          <label class="mini-card d-flex align-items-center gap-3 mb-0">
+            <input class="form-check-input mt-0" type="checkbox" data-check="${index}">
+            <span>${text}</span>
+          </label>
+        `;
+        target.appendChild(col);
+      });
+    }
+
+    document.querySelectorAll("[data-copy]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const selector = button.getAttribute("data-copy");
+        const text = document.querySelector(selector).textContent;
+
+        try {
+          await navigator.clipboard.writeText(text);
+          showToast("Codice copiato.");
+        } catch {
+          showToast("Non riesco a copiare automaticamente.");
+        }
+      });
+    });
+
+    const sections = [...document.querySelectorAll("section[id]")];
+    const tocLinks = [...document.querySelectorAll(".toc-link")];
+
+    window.addEventListener("scroll", () => {
+      let currentId = "";
+
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= 120 && rect.bottom >= 120) {
+          currentId = section.id;
+        }
+      });
+
+      tocLinks.forEach((link) => {
+        link.classList.toggle("active", link.getAttribute("href") === `#${currentId}`);
+      });
+    });
+
+    renderQuiz();
+    renderExercises();
+    renderChecklist();
+  </script>
+</body>
+</html>
