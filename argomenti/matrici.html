@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ripetizioni C: matrici e funzioni</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --card: rgba(255, 255, 255, 0.88);
+      --card-strong: #ffffff;
+      --text: #10172a;
+      --muted: #52607a;
+      --accent: #3457d5;
+      --accent-2: #0097a7;
+      --border: rgba(20, 24, 40, 0.12);
+      --shadow: 0 22px 60px rgba(70, 84, 115, 0.15);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      min-height: 100vh;
+      font-family: "Inter", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        linear-gradient(135deg, rgba(52, 87, 213, 0.12), transparent 34rem),
+        linear-gradient(225deg, rgba(0, 151, 167, 0.12), transparent 32rem),
+        linear-gradient(180deg, #f7f8fc 0%, #eef3ff 45%, #ffffff 100%);
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    .font-mono, code, pre { font-family: "JetBrains Mono", monospace; }
+    .navbar {
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+    .navbar-brand { font-weight: 800; letter-spacing: -0.04em; }
+    .nav-link { color: var(--muted); font-weight: 700; font-size: 0.94rem; }
+    .nav-link:hover, .nav-link.active { color: var(--text); }
+    .hero { padding: 8.5rem 0 4.5rem; }
+    .hero h1 {
+      font-size: clamp(2.8rem, 8vw, 6.2rem);
+      line-height: 0.92;
+      letter-spacing: -0.075em;
+      font-weight: 800;
+    }
+    .hero p, .section-subtitle, .text-muted-custom, .mini-card p { color: var(--muted); }
+    .hero p { font-size: 1.12rem; max-width: 760px; }
+    .section { padding: 5rem 0; }
+    .section-title {
+      letter-spacing: -0.055em;
+      font-weight: 800;
+      font-size: clamp(2rem, 5vw, 3.8rem);
+    }
+    .section-subtitle { font-size: 1.06rem; max-width: 760px; }
+    .badge-pill {
+      display: inline-flex;
+      gap: 0.55rem;
+      align-items: center;
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 999px;
+      padding: 0.48rem 0.82rem;
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+    .btn-main, .btn-soft {
+      border-radius: 999px;
+      padding: 0.82rem 1.1rem;
+      font-weight: 800;
+    }
+    .btn-main {
+      border: 0;
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 14px 30px rgba(52, 87, 213, 0.22);
+    }
+    .btn-soft {
+      color: var(--text);
+      border: 1px solid var(--border);
+      background: var(--card);
+    }
+    .btn-main:hover { color: #fff; }
+    .btn-main:hover, .btn-soft:hover { transform: translateY(-2px); }
+    .glass-card, .mini-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .mini-card { padding: 1.25rem; height: 100%; box-shadow: none; }
+    .mini-card h3, .mini-card h4 { font-weight: 800; letter-spacing: -0.035em; }
+    .icon-chip {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(52, 87, 213, 0.18), rgba(0, 151, 167, 0.18));
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    pre {
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: 0 16px 34px rgba(70, 84, 115, 0.12);
+      overflow: auto;
+    }
+    code, pre { font-size: 0.9rem; }
+    .code-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 0.84rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.7rem;
+    }
+    .copy-btn {
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 0.45rem 0.65rem;
+      font-weight: 800;
+      font-size: 0.82rem;
+    }
+    .table {
+      --bs-table-color: var(--text);
+      --bs-table-bg: transparent;
+      --bs-table-border-color: var(--border);
+    }
+    .table thead th {
+      color: var(--muted);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(64px, 1fr));
+      gap: 0.55rem;
+    }
+    .matrix-cell {
+      min-height: 64px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--card-strong);
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 800;
+    }
+    .matrix-cell.active { background: rgba(52, 87, 213, 0.12); border-color: rgba(52, 87, 213, 0.4); }
+    .toc-link {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.7rem 0.85rem;
+      border-radius: 13px;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .toc-link:hover, .toc-link.active { background: var(--card-strong); color: var(--text); }
+    .floating-toc { position: sticky; top: 92px; }
+    .quiz-option {
+      width: 100%;
+      text-align: left;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 0.9rem 1rem;
+      margin-bottom: 0.75rem;
+      font-weight: 700;
+    }
+    .quiz-option.correct { border-color: rgba(20, 137, 90, 0.75); background: rgba(20, 137, 90, 0.12); }
+    .quiz-option.wrong { border-color: rgba(200, 53, 69, 0.75); background: rgba(200, 53, 69, 0.1); }
+    .exercise-item {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--card);
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+    .exercise-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem;
+      cursor: pointer;
+    }
+    .exercise-body { display: none; padding: 0 1rem 1rem; color: var(--muted); }
+    .exercise-item.open .exercise-body { display: block; }
+    .progress-thin { height: 10px; border-radius: 999px; background: rgba(20, 24, 40, 0.08); overflow: hidden; }
+    .progress-thin span { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: 0.4s ease; }
+    .small-title { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.13em; color: var(--muted); font-weight: 800; }
+    .toast-area { position: fixed; right: 20px; bottom: 20px; z-index: 1100; width: min(360px, calc(100vw - 40px)); }
+    .custom-toast { border-radius: 16px; background: var(--card-strong); border: 1px solid var(--border); box-shadow: var(--shadow); padding: 1rem; margin-top: 0.75rem; }
+    .footer { border-top: 1px solid var(--border); color: var(--muted); padding: 2rem 0; }
+    @media (max-width: 991px) {
+      .hero { padding-top: 7rem; }
+      .floating-toc { position: static; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="../index.html">
+        <span class="icon-chip m-0" style="width:36px;height:36px;border-radius:12px;"><i class="fa-solid fa-code"></i></span>
+        Ripasso C
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-label="Apri menu">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+          <li class="nav-item"><a class="nav-link" href="../index.html#argomenti">Argomenti</a></li>
+          <li class="nav-item"><a class="nav-link" href="struct.html">Struct</a></li>
+          <li class="nav-item"><a class="nav-link" href="funzioni.html">Funzioni</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main id="home">
+    <section class="hero">
+      <div class="container">
+        <div class="row align-items-center g-4">
+          <div class="col-lg-7">
+            <div class="badge-pill mb-4"><i class="fa-solid fa-table-cells-large"></i> Matrici in C</div>
+            <h1>Righe, colonne, cicli.</h1>
+            <p class="mt-4">
+              Una matrice è come una tabella: ogni cella si raggiunge con due indici, riga e colonna. Per visitarla tutta servono quasi sempre due cicli annidati.
+            </p>
+            <div class="d-flex flex-wrap gap-2 mt-4">
+              <a class="btn btn-main" href="#base"><i class="fa-solid fa-play me-2"></i>Inizia</a>
+              <a class="btn btn-soft" href="#funzioni"><i class="fa-solid fa-gears me-2"></i>Funzioni con matrici</a>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="glass-card p-3 p-md-4">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="code-label mb-0"><i class="fa-solid fa-table-cells"></i> Matrice 3x3</span>
+              </div>
+              <div class="matrix-grid">
+                <div class="matrix-cell">1</div>
+                <div class="matrix-cell">2</div>
+                <div class="matrix-cell">3</div>
+                <div class="matrix-cell">4</div>
+                <div class="matrix-cell">5</div>
+                <div class="matrix-cell active">6</div>
+                <div class="matrix-cell">7</div>
+                <div class="matrix-cell">8</div>
+                <div class="matrix-cell">9</div>
+              </div>
+              <p class="text-muted-custom mt-3 mb-0"><span class="font-mono">matrice[1][2]</span> indica riga 1, colonna 2: valore 6.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section pt-0">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-lg-3">
+            <aside class="floating-toc glass-card p-3">
+              <div class="small-title mb-2">Percorso</div>
+              <a class="toc-link" href="#base"><i class="fa-solid fa-table-cells"></i> Base</a>
+              <a class="toc-link" href="#accesso"><i class="fa-solid fa-location-crosshairs"></i> Accesso</a>
+              <a class="toc-link" href="#cicli"><i class="fa-solid fa-repeat"></i> Cicli</a>
+              <a class="toc-link" href="#funzioni"><i class="fa-solid fa-gears"></i> Funzioni</a>
+              <a class="toc-link" href="#esempio"><i class="fa-solid fa-file-code"></i> Esempio</a>
+              <a class="toc-link" href="#quiz"><i class="fa-solid fa-circle-question"></i> Quiz</a>
+              <a class="toc-link" href="#esercizi"><i class="fa-solid fa-dumbbell"></i> Esercizi</a>
+            </aside>
+          </div>
+
+          <div class="col-lg-9">
+            <section id="base" class="mb-5">
+              <div class="mb-4">
+                <div class="badge-pill mb-3"><i class="fa-solid fa-table-cells"></i> Parte 1</div>
+                <h2 class="section-title">Che cos'è una matrice</h2>
+                <p class="section-subtitle">
+                  Una matrice è un array a due dimensioni. Invece di avere solo una posizione, ogni elemento ha una riga e una colonna.
+                </p>
+              </div>
+
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="mini-card">
+                    <h3>Dichiarazione</h3>
+                    <pre><code class="language-c">#define RIGHE 3
+#define COLONNE 3
+
+int matrice[RIGHE][COLONNE] = {
+    {1, 2, 3},
+    {4, 5, 6},
+    {7, 8, 9}
+};</code></pre>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mini-card">
+                    <h3>Coordinate</h3>
+                    <p>Gli indici partono da 0. In una 3x3 le righe sono 0, 1, 2 e le colonne sono 0, 1, 2.</p>
+                    <div class="table-responsive">
+                      <table class="table align-middle mb-0">
+                        <thead>
+                          <tr>
+                            <th>Espressione</th>
+                            <th>Significato</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td class="font-mono">matrice[0][0]</td>
+                            <td>Prima riga, prima colonna.</td>
+                          </tr>
+                          <tr>
+                            <td class="font-mono">matrice[1][2]</td>
+                            <td>Seconda riga, terza colonna.</td>
+                          </tr>
+                          <tr>
+                            <td class="font-mono">matrice[i][j]</td>
+                            <td>Cella alla riga i e colonna j.</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section id="accesso" class="mb-5">
+              <div class="mb-4">
+                <div class="badge-pill mb-3"><i class="fa-solid fa-location-crosshairs"></i> Parte 2</div>
+                <h2 class="section-title">Come leggere una cella</h2>
+                <p class="section-subtitle">
+                  Pensa a battaglia navale: scegli una riga, scegli una colonna, e prendi la cella dove si incrociano.
+                </p>
+              </div>
+
+              <div class="glass-card p-3 p-md-4">
+                <div class="row g-4 align-items-center">
+                  <div class="col-md-5">
+                    <h3 class="fw-bold">Esempio: <span class="font-mono">matrice[1][2]</span></h3>
+                    <p class="text-muted-custom mb-0">
+                      Riga 1 è <span class="font-mono">{4, 5, 6}</span>. Colonna 2 è la terza colonna. L'incrocio è <span class="font-mono">6</span>.
+                    </p>
+                  </div>
+                  <div class="col-md-7">
+                    <pre class="mb-0"><code class="language-c">printf("%d", matrice[1][2]);  // stampa 6
+
+matrice[1][2] = 20;           // modifica quella cella</code></pre>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section id="cicli" class="mb-5">
+              <div class="mb-4">
+                <div class="badge-pill mb-3"><i class="fa-solid fa-repeat"></i> Parte 3</div>
+                <h2 class="section-title">Cicli annidati</h2>
+                <p class="section-subtitle">
+                  Il ciclo esterno scorre le righe. Per ogni riga, il ciclo interno scorre tutte le colonne.
+                </p>
+              </div>
+
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="mini-card">
+                    <h3>Schema standard</h3>
+                    <pre><code class="language-c">int i;
+int j;
+
+for (i = 0; i &lt; RIGHE; i++)
+{
+    for (j = 0; j &lt; COLONNE; j++)
+    {
+        printf("%d ", matrice[i][j]);
+    }
+
+    printf("\n");
+}</code></pre>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mini-card">
+                    <h3>Cosa succede</h3>
+                    <p>Prima leggi tutta la riga 0, poi tutta la riga 1, poi tutta la riga 2.</p>
+                    <pre><code class="language-text">i = 0: 1 2 3
+i = 1: 4 5 6
+i = 2: 7 8 9</code></pre>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section id="funzioni" class="mb-5">
+              <div class="mb-4">
+                <div class="badge-pill mb-3"><i class="fa-solid fa-gears"></i> Parte 4</div>
+                <h2 class="section-title">Funzioni con matrici</h2>
+                <p class="section-subtitle">
+                  Quando passi una matrice a una funzione, devi specificare almeno il numero di colonne. Non serve scrivere <span class="font-mono">*</span> nella chiamata: la matrice arriva già come indirizzo.
+                </p>
+              </div>
+
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="mini-card">
+                    <h3>Somma di tutti i valori</h3>
+                    <pre><code class="language-c">int sommaMatrice(int matrice[][COLONNE])
+{
+    int i;
+    int j;
+    int somma = 0;
+
+    for (i = 0; i &lt; RIGHE; i++)
+    {
+        for (j = 0; j &lt; COLONNE; j++)
+        {
+            somma += matrice[i][j];
+        }
+    }
+
+    return somma;
+}</code></pre>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mini-card">
+                    <h3>Conta occorrenze</h3>
+                    <pre><code class="language-c">int cercaOccorrenze(int matrice[][COLONNE], int valore)
+{
+    int i;
+    int j;
+    int contatore = 0;
+
+    for (i = 0; i &lt; RIGHE; i++)
+    {
+        for (j = 0; j &lt; COLONNE; j++)
+        {
+            if (matrice[i][j] == valore)
+            {
+                contatore++;
+            }
+        }
+    }
+
+    return contatore;
+}</code></pre>
+                  </div>
+                </div>
+              </div>
+
+              <div class="glass-card p-3 p-md-4 mt-4">
+                <h3 class="fw-bold">Matrice di output</h3>
+                <p class="text-muted-custom">
+                  Se vuoi creare una seconda matrice con il risultato, la passi come parametro e la riempi dentro la funzione.
+                </p>
+                <pre class="mb-0"><code class="language-c">void pariDispariMatrice(int matrice[][COLONNE], char risultato[][COLONNE])
+{
+    int i;
+    int j;
+
+    for (i = 0; i &lt; RIGHE; i++)
+    {
+        for (j = 0; j &lt; COLONNE; j++)
+        {
+            if (matrice[i][j] % 2 == 0)
+            {
+                risultato[i][j] = 'P';
+            }
+            else
+            {
+                risultato[i][j] = 'D';
+            }
+        }
+    }
+}</code></pre>
+              </div>
+            </section>
+
+            <section id="esempio" class="mb-5">
+              <div class="mb-4">
+                <div class="badge-pill mb-3"><i class="fa-solid fa-file-code"></i> Codice</div>
+                <h2 class="section-title">File di esempio</h2>
+              </div>
+
+              <div class="glass-card p-3 p-md-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="code-label mb-0"><i class="fa-solid fa-terminal"></i> C</span>
+                  <button class="copy-btn" data-copy="#fullCode"><i class="fa-regular fa-copy me-1"></i>Copia</button>
+                </div>
+                <pre><code class="language-c" id="fullCode">#include &lt;stdio.h&gt;
+
+#define RIGHE 3
+#define COLONNE 3
+
+void stampaMatrice(int matrice[][COLONNE]);
+int sommaMatrice(int matrice[][COLONNE]);
+int cercaOccorrenze(int matrice[][COLONNE], int valore);
+void pariDispariMatrice(int matrice[][COLONNE], char risultato[][COLONNE]);
+
+int main(void)
+{
+    int matrice[RIGHE][COLONNE] = {
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9}
+    };
+
+    char risultato[RIGHE][COLONNE];
+
+    stampaMatrice(matrice);
+    printf("Somma: %d\n", sommaMatrice(matrice));
+    printf("Occorrenze di 2: %d\n", cercaOccorrenze(matrice, 2));
+
+    pariDispariMatrice(matrice, risultato);
+
+    return 0;
+}
+
+void stampaMatrice(int matrice[][COLONNE])
+{
+    int i;
+    int j;
+
+    for (i = 0; i &lt; RIGHE; i++)
+    {
+        for (j = 0; j &lt; COLONNE; j++)
+        {
+            printf("%d ", matrice[i][j]);
+        }
+
+        printf("\n");
+    }
+}
+
+int sommaMatrice(int matrice[][COLONNE])
+{
+    int i;
+    int j;
+    int somma = 0;
+
+    for (i = 0; i &lt; RIGHE; i++)
+    {
+        for (j = 0; j &lt; COLONNE; j++)
+        {
+            somma += matrice[i][j];
+        }
+    }
+
+    return somma;
+}
+
+int cercaOccorrenze(int matrice[][COLONNE], int valore)
+{
+    int i;
+    int j;
+    int contatore = 0;
+
+    for (i = 0; i &lt; RIGHE; i++)
+    {
+        for (j = 0; j &lt; COLONNE; j++)
+        {
+            if (matrice[i][j] == valore)
+            {
+                contatore++;
+            }
+        }
+    }
+
+    return contatore;
+}
+
+void pariDispariMatrice(int matrice[][COLONNE], char risultato[][COLONNE])
+{
+    int i;
+    int j;
+
+    for (i = 0; i &lt; RIGHE; i++)
+    {
+        for (j = 0; j &lt; COLONNE; j++)
+        {
+            risultato[i][j] = matrice[i][j] % 2 == 0 ? 'P' : 'D';
+        }
+    }
+}</code></pre>
+              </div>
+            </section>
+
+            <section id="quiz" class="mb-5">
+              <div class="mb-4">
+                <div class="badge-pill mb-3"><i class="fa-solid fa-circle-question"></i> Quiz</div>
+                <h2 class="section-title">Quiz rapido</h2>
+              </div>
+
+              <div class="glass-card p-3 p-md-4">
+                <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+                  <h3 class="fw-bold mb-0" id="quizQuestion">Domanda</h3>
+                  <span class="badge-pill" id="quizCount">1/5</span>
+                </div>
+                <div class="progress-thin mb-4"><span id="quizProgress"></span></div>
+                <div id="quizOptions"></div>
+                <div id="quizFeedback" class="mt-3"></div>
+                <button class="btn btn-main mt-3 d-none" id="nextQuiz" type="button">Prossima domanda</button>
+              </div>
+            </section>
+
+            <section id="esercizi" class="mb-5">
+              <div class="mb-4">
+                <div class="badge-pill mb-3"><i class="fa-solid fa-dumbbell"></i> Esercizi</div>
+                <h2 class="section-title">Esercizietti</h2>
+              </div>
+
+              <div id="exerciseList"></div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast-area" id="toastArea"></div>
+
+  <footer class="footer">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
+      <div>Ripetizioni su matrici e funzioni in C</div>
+      <a href="#home" class="btn btn-soft"><i class="fa-solid fa-arrow-up me-2"></i>Torna su</a>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    let quizIndex = 0;
+    let quizLocked = false;
+
+    const quizzes = [
+      {
+        q: "Come accedo alla cella riga 1, colonna 2?",
+        options: ["matrice[1][2]", "matrice[2][1]", "matrice(1, 2)"],
+        correct: 0,
+        explain: "In C si usano le parentesi quadre: prima la riga, poi la colonna."
+      },
+      {
+        q: "In una matrice 3x3 quali sono gli indici validi?",
+        options: ["0, 1, 2", "1, 2, 3", "0, 1, 2, 3"],
+        correct: 0,
+        explain: "Gli indici partono da 0, quindi una dimensione 3 usa 0, 1 e 2."
+      },
+      {
+        q: "Perché servono due cicli annidati?",
+        options: ["Uno per le righe e uno per le colonne", "Uno per pari e uno per dispari", "Uno per dichiarare e uno per stampare"],
+        correct: 0,
+        explain: "Il ciclo esterno scorre le righe, quello interno scorre le colonne della riga corrente."
+      },
+      {
+        q: "Come si dichiara un parametro matrice con COLONNE costante?",
+        options: ["int matrice[][COLONNE]", "int matrice[][]", "int[] matrice[COLONNE]"],
+        correct: 0,
+        explain: "Nelle funzioni devi specificare almeno la dimensione delle colonne."
+      },
+      {
+        q: "Se una funzione riempie una seconda matrice, come fa a restituirla?",
+        options: ["La riceve come parametro e la modifica", "Usa return matrice[][]", "Non si può fare mai"],
+        correct: 0,
+        explain: "La soluzione semplice è passare anche la matrice risultato e scriverci dentro."
+      }
+    ];
+
+    const exercises = [
+      {
+        title: "Stampa solo la diagonale",
+        text: "Scrivi una funzione che stampa gli elementi matrice[0][0], matrice[1][1], matrice[2][2].",
+        hint: "Nella diagonale principale riga e colonna hanno lo stesso indice.",
+        solution: `void stampaDiagonale(int matrice[][COLONNE])
+{
+    int i;
+
+    for (i = 0; i < RIGHE; i++)
+    {
+        printf("%d ", matrice[i][i]);
+    }
+}`
+      },
+      {
+        title: "Conta i pari",
+        text: "Scrivi una funzione che restituisce quanti numeri pari ci sono nella matrice.",
+        hint: "Usa due cicli e controlla matrice[i][j] % 2 == 0.",
+        solution: `int contaPari(int matrice[][COLONNE])
+{
+    int i;
+    int j;
+    int contatore = 0;
+
+    for (i = 0; i < RIGHE; i++)
+    {
+        for (j = 0; j < COLONNE; j++)
+        {
+            if (matrice[i][j] % 2 == 0)
+            {
+                contatore++;
+            }
+        }
+    }
+
+    return contatore;
+}`
+      },
+      {
+        title: "Trova il massimo",
+        text: "Scrivi una funzione che restituisce il valore massimo dentro la matrice.",
+        hint: "Parti da massimo = matrice[0][0], poi confronta tutte le celle.",
+        solution: `int massimoMatrice(int matrice[][COLONNE])
+{
+    int i;
+    int j;
+    int massimo = matrice[0][0];
+
+    for (i = 0; i < RIGHE; i++)
+    {
+        for (j = 0; j < COLONNE; j++)
+        {
+            if (matrice[i][j] > massimo)
+            {
+                massimo = matrice[i][j];
+            }
+        }
+    }
+
+    return massimo;
+}`
+      },
+      {
+        title: "Somma per riga",
+        text: "Scrivi una funzione che stampa la somma di ogni riga.",
+        hint: "A ogni nuova riga azzera somma, poi somma le colonne.",
+        solution: `void stampaSommaRighe(int matrice[][COLONNE])
+{
+    int i;
+    int j;
+    int somma;
+
+    for (i = 0; i < RIGHE; i++)
+    {
+        somma = 0;
+
+        for (j = 0; j < COLONNE; j++)
+        {
+            somma += matrice[i][j];
+        }
+
+        printf("Riga %d: %d\\n", i, somma);
+    }
+}`
+      }
+    ];
+
+    function showToast(message) {
+      const area = document.querySelector("#toastArea");
+      const toast = document.createElement("div");
+      toast.className = "custom-toast";
+      toast.textContent = message;
+      area.appendChild(toast);
+      setTimeout(() => toast.remove(), 2600);
+    }
+
+    function renderQuiz() {
+      quizLocked = false;
+      const current = quizzes[quizIndex];
+      document.querySelector("#quizQuestion").textContent = current.q;
+      document.querySelector("#quizCount").textContent = `${quizIndex + 1}/${quizzes.length}`;
+      document.querySelector("#quizProgress").style.width = `${(quizIndex / quizzes.length) * 100}%`;
+      document.querySelector("#quizFeedback").innerHTML = "";
+      document.querySelector("#nextQuiz").classList.add("d-none");
+
+      const options = document.querySelector("#quizOptions");
+      options.innerHTML = "";
+      current.options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "quiz-option";
+        button.textContent = option;
+        button.addEventListener("click", () => checkQuiz(index, button));
+        options.appendChild(button);
+      });
+    }
+
+    function checkQuiz(index, button) {
+      if (quizLocked) return;
+      quizLocked = true;
+      const current = quizzes[quizIndex];
+      [...document.querySelectorAll(".quiz-option")].forEach((item, i) => {
+        if (i === current.correct) item.classList.add("correct");
+      });
+      if (index !== current.correct) button.classList.add("wrong");
+      document.querySelector("#quizFeedback").innerHTML = `
+        <div class="alert ${index === current.correct ? "alert-success" : "alert-warning"} border-0 rounded-4 mb-0">
+          ${index === current.correct ? "Giusto." : "Quasi."} ${current.explain}
+        </div>
+      `;
+      if (quizIndex < quizzes.length - 1) {
+        document.querySelector("#nextQuiz").classList.remove("d-none");
+      } else {
+        document.querySelector("#quizProgress").style.width = "100%";
+      }
+    }
+
+    document.querySelector("#nextQuiz").addEventListener("click", () => {
+      quizIndex++;
+      renderQuiz();
+    });
+
+    function renderExercises() {
+      const list = document.querySelector("#exerciseList");
+      list.innerHTML = "";
+      exercises.forEach((exercise, index) => {
+        const item = document.createElement("div");
+        item.className = "exercise-item";
+        item.innerHTML = `
+          <div class="exercise-head">
+            <div>
+              <div class="small-title">Esercizio ${index + 1}</div>
+              <h3 class="h5 fw-bold mb-0">${exercise.title}</h3>
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="exercise-body">
+            <p>${exercise.text}</p>
+            <div class="alert alert-info border-0 rounded-4 mb-3">${exercise.hint}</div>
+            <button class="btn btn-soft solution-toggle" type="button"><i class="fa-solid fa-eye me-2"></i><span>Mostra soluzione</span></button>
+            <div class="solution-box d-none mt-3">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="code-label mb-0"><i class="fa-solid fa-terminal"></i> Soluzione</span>
+                <button class="copy-btn" data-copy-solution type="button"><i class="fa-regular fa-copy me-1"></i>Copia</button>
+              </div>
+              <pre class="mb-0"><code class="language-c"></code></pre>
+            </div>
+          </div>
+        `;
+        item.querySelector(".exercise-head").addEventListener("click", () => item.classList.toggle("open"));
+        const solutionCode = item.querySelector(".solution-box code");
+        solutionCode.textContent = exercise.solution;
+        item.querySelector(".solution-toggle").addEventListener("click", () => {
+          const solutionBox = item.querySelector(".solution-box");
+          const isHidden = solutionBox.classList.toggle("d-none");
+          item.querySelector(".solution-toggle i").className = isHidden ? "fa-solid fa-eye me-2" : "fa-solid fa-eye-slash me-2";
+          item.querySelector(".solution-toggle span").textContent = isHidden ? "Mostra soluzione" : "Nascondi soluzione";
+          if (!isHidden && window.Prism) Prism.highlightElement(solutionCode);
+        });
+        item.querySelector("[data-copy-solution]").addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(exercise.solution);
+            showToast("Soluzione copiata.");
+          } catch {
+            showToast("Non riesco a copiare automaticamente.");
+          }
+        });
+        list.appendChild(item);
+      });
+    }
+
+    document.querySelectorAll("[data-copy]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const text = document.querySelector(button.getAttribute("data-copy")).textContent;
+        try {
+          await navigator.clipboard.writeText(text);
+          showToast("Codice copiato.");
+        } catch {
+          showToast("Non riesco a copiare automaticamente.");
+        }
+      });
+    });
+
+    const sections = [...document.querySelectorAll("section[id]")];
+    const tocLinks = [...document.querySelectorAll(".toc-link")];
+    window.addEventListener("scroll", () => {
+      let currentId = "";
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= 120 && rect.bottom >= 120) currentId = section.id;
+      });
+      tocLinks.forEach((link) => link.classList.toggle("active", link.getAttribute("href") === `#${currentId}`));
+    });
+
+    renderQuiz();
+    renderExercises();
+  </script>
+</body>
+</html>
